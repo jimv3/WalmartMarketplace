@@ -31,7 +31,7 @@ async function processLineByLine(fileName) {
             fileInfo["RetireItem"] = items
             console.log(`File: ${fileNumber}`)
             //console.log(JSON.stringify(fileInfo))
-            fs.writeFileSync(`/Users/jvaugha/RetireItems/retire_items_${year}${month}${day}_${hour}${minute}_${fileNumber}.json`, JSON.stringify(fileInfo))
+            fs.writeFileSync(`./WalmartFiles/retire_items_${year}${month}${day}_${hour}${minute}_${fileNumber}.json`, JSON.stringify(fileInfo))
             items = []
             fileNumber += 1
         }
@@ -39,13 +39,13 @@ async function processLineByLine(fileName) {
 
     if (items.length > 0) {
         fileInfo["RetireItem"] = items
-        fs.writeFileSync(`/Users/jvaugha/RetireItems/retire_items_${year}${month}${day}_${hour}${minute}_${fileNumber}.json`, JSON.stringify(fileInfo))
+        fs.writeFileSync(`./WalmartFiles/retire_items_${year}${month}${day}_${hour}${minute}_${fileNumber}.json`, JSON.stringify(fileInfo))
     }
 }
 
 
 if (process.argv.length < 3) {
-    processLineByLine('/Users/jvaugha/Downloads/RetireItems.csv')
+    console.log("Usage: node retireitems.js <file>")
 }
 else {
     processLineByLine(process.argv[2])
