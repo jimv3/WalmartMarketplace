@@ -1,7 +1,6 @@
 const fs = require('fs')
-const itemsWithOnHand = require('./items.json')
-const itemsWithZeroOnHand = require('./onhands.json')
-const itemsWithZeroOnHandSkus = itemsWithZeroOnHand.Items.map(item => item.sku)
+const items = require('./WalmartFiles/1710537300517_inventory.json')
+const itemsWithZeroOnHand = items.Inventory.filter(x => x.quantity.amount === 0)
 
 async function process(fileteredList) {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -27,4 +26,4 @@ async function process(fileteredList) {
     }
 }
 
-process(itemsWithOnHand.Items.filter(item => itemsWithZeroOnHandSkus.includes(item.sku)))
+process(itemsWithZeroOnHand)

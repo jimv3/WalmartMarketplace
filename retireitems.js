@@ -18,28 +18,27 @@ async function processLineByLine(fileName) {
 
     let fileNumber = 1
     let fileInfo = {
-        "RetireItemHeader": {
-            "feedDate": todaysDate,
-            "version": "1.0"
+        "InventoryHeader": {
+            "version": "1.4"
         }
     }
     let items = []
     for await (const line of rl) {
-        items.push({ "sku": line })
+        items.push({ "sku": line, "quantity": { "unit": "EACH", "amount": 0 } })
 
         if (items.length === 10000) {
-            fileInfo["RetireItem"] = items
+            fileInfo["Inventory"] = items
             console.log(`File: ${fileNumber}`)
             //console.log(JSON.stringify(fileInfo))
-            fs.writeFileSync(`./WalmartFiles/retire_items_${year}${month}${day}_${hour}${minute}_${fileNumber}.json`, JSON.stringify(fileInfo))
+            fs.writeFileSync(`./WalmartFiles/inventory_${year}${month}${day}_${hour}${minute}_${fileNumber}.json`, JSON.stringify(fileInfo))
             items = []
             fileNumber += 1
         }
     }
 
     if (items.length > 0) {
-        fileInfo["RetireItem"] = items
-        fs.writeFileSync(`./WalmartFiles/retire_items_${year}${month}${day}_${hour}${minute}_${fileNumber}.json`, JSON.stringify(fileInfo))
+        fileInfo["Inventory"] = items
+        fs.writeFileSync(`./WalmartFiles/inventory_${year}${month}${day}_${hour}${minute}_${fileNumber}.json`, JSON.stringify(fileInfo))
     }
 }
 
