@@ -87,7 +87,7 @@ async function getFeedErrors(accessToken, itemCount) {
             });
             let responseErrors = response.data.itemDetails.itemIngestionStatus.filter(item => item.ingestionStatus != 'SUCCESS' && !(item.ingestionErrors?.ingestionError?.every(error => error.code === 'PIVI_021')) && !(item.ingestionErrors?.ingestionError?.every(error => error.code === 'ERR_OFFER_2014')));
             if (responseErrors.length > 0) {
-                errors = errors.concat(responseErrors.map(item => { return { sku: item.sku, itemErrors: [item.ingestionErrors?.ingestionError?.map(error => `${error.type}:${error.code}:${error.description}`).join(', ')] } }));
+                errors = errors.concat(responseErrors.map(item => { return { sku: item.sku, ingestionStatus: item.ingestionStatus, itemErrors: [item.ingestionErrors?.ingestionError?.map(error => `${error.type}:${error.code}:${error.description}`).join(', ')] } }));
             }
             offset += 50;
         }
