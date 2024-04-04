@@ -2,3 +2,4 @@ jmeter.log
 **/.DS_Store
 ean_list.txt
 WalmartFiles/**
+node_modules/**
