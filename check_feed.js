@@ -1,5 +1,4 @@
 const axios = require('axios');
-const { off } = require('process');
 const qs = require('querystring');
 
 // Read the feedId from command line arguments
