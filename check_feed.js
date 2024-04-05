@@ -1,5 +1,6 @@
 const axios = require('axios');
 const qs = require('querystring');
+const performance = require('node:perf_hooks');
 
 // Read the feedId from command line arguments
 const feedId = process.argv[2];
@@ -39,7 +40,10 @@ async function getToken() {
             data: qs.stringify({ 'grant_type': 'client_credentials' }),
             url
         }
+        const startTime = performance.now();
         const response = await axios(options);
+        const endTime = performance.now();
+        console.log(`Token API response time: ${endTime - startTime} ms`);
         return response.data.access_token;
     } catch (error) {
         console.error('Error calling token API:', error.message);
@@ -54,6 +58,7 @@ async function getToken() {
  */
 async function getFeedItemCount(accessToken) {
     try {
+        const startTime = performance.now();
         const response = await axios.get(`https://marketplace.walmartapis.com/v3/feeds?feedId=${feedId}`, {
             headers: {
                 'WM_QOS.CORRELATION_ID': correlationId,
@@ -62,6 +67,8 @@ async function getFeedItemCount(accessToken) {
                 'WM_SEC.ACCESS_TOKEN': accessToken
             }
         });
+        const endTime = performance.now();
+        console.log(`Feeds API response time: ${endTime - startTime} ms`);
         console.log(`Filename: ${response.data.results.feed[0].fileName}`);
         console.log(`Feed type: ${response.data.results.feed[0].feedType}`);
         console.log(`Feed status: ${response.data.results.feed[0].feedStatus}`);
@@ -77,6 +84,7 @@ async function getFeedErrors(accessToken, itemCount) {
     let errors = [];
     try {
         while (offset < itemCount) {
+            const startTime = performance.now();
             const response = await axios.get(`https://marketplace.walmartapis.com/v3/feeds/${feedId}?includeDetails=true&offset=${offset}`, {
                 headers: {
                     'WM_QOS.CORRELATION_ID': correlationId,
@@ -85,6 +93,8 @@ async function getFeedErrors(accessToken, itemCount) {
                     'WM_SEC.ACCESS_TOKEN': accessToken
                 }
             });
+            const endTime = performance.now();
+            console.log(`Feeds API response time: ${endTime - startTime} ms`);
             let responseErrors = response.data.itemDetails.itemIngestionStatus.filter(item => item.ingestionStatus != 'SUCCESS' && !(item.ingestionErrors?.ingestionError?.every(error => error.code === 'PIVI_021')) && !(item.ingestionErrors?.ingestionError?.every(error => error.code === 'ERR_OFFER_2014')));
             if (responseErrors.length > 0) {
                 errors = errors.concat(responseErrors.map(item => { return { sku: item.sku, ingestionStatus: item.ingestionStatus, itemErrors: [item.ingestionErrors?.ingestionError?.map(error => `${error.type}:${error.code}:${error.description}`).join(', ')] } }));
