@@ -1,6 +1,6 @@
 const axios = require('axios');
 const qs = require('querystring');
-const performance = require('node:perf_hooks');
+const { performance } = require('node:perf_hooks');
 
 // Read the feedId from command line arguments
 const feedId = process.argv[2];
