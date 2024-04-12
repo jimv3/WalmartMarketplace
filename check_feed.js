@@ -1,6 +1,7 @@
 const axios = require('axios');
 const qs = require('querystring');
 const { performance } = require('node:perf_hooks');
+const { error } = require('console');
 
 // Read the feedId from command line arguments
 const feedId = process.argv[2];
@@ -68,7 +69,7 @@ async function getFeedItemCount(accessToken) {
             }
         });
         const endTime = performance.now();
-        console.log(`Feeds API response time: ${endTime - startTime} ms`);
+        // console.log(`Feeds API response time: ${endTime - startTime} ms`);
         console.log(`Filename: ${response.data.results.feed[0].fileName}`);
         console.log(`Feed type: ${response.data.results.feed[0].feedType}`);
         console.log(`Feed status: ${response.data.results.feed[0].feedStatus}`);
@@ -94,10 +95,14 @@ async function getFeedErrors(accessToken, itemCount) {
                 }
             });
             const endTime = performance.now();
-            console.log(`Feeds API response time: ${endTime - startTime} ms`);
+            // console.log(`Feeds API response time: ${endTime - startTime} ms`);
             let responseErrors = response.data.itemDetails.itemIngestionStatus.filter(item => item.ingestionStatus != 'SUCCESS' && !(item.ingestionErrors?.ingestionError?.every(error => error.code === 'PIVI_021')) && !(item.ingestionErrors?.ingestionError?.every(error => error.code === 'ERR_OFFER_2014')));
             if (responseErrors.length > 0) {
-                errors = errors.concat(responseErrors.map(item => { return { sku: item.sku, ingestionStatus: item.ingestionStatus, itemErrors: [item.ingestionErrors?.ingestionError?.map(error => `${error.type}:${error.code}:${error.description}`).join(', ')] } }));
+                // errors = errors.concat(responseErrors.map(item => { return { sku: item.sku, ingestionStatus: item.ingestionStatus, itemErrors: [item.ingestionErrors?.ingestionError?.map(error => `${error.type}:${error.code}:${error.description}`).join(', ')] } }));
+                let skus = responseErrors.map(item => { return { sku: item.sku } });
+                for (var sku of skus) {
+                    console.log(sku.sku);
+                }
             }
             offset += 50;
         }
